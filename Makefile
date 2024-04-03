@@ -150,7 +150,7 @@ UPROGS=\
 	$U/_hw3_3\
 	$U/_ps\
 	$U/_hw3_mut\
-	$U/_hw3_notmut
+	$U/_hw3_notmut\
 	$U/_hw4_exec\
 	$U/_dmsg\
 	$U/_hw4_overflow\
