@@ -31,7 +31,9 @@ exec(char *path, char **argv)
   pagetable_t pagetable = 0, oldpagetable;
   struct proc *p = myproc();
 
+  acquire(&p->lock);
   pr_msg("proc id = %d, with program name = %s", p->pid, path);
+  release(&p->lock);
 
   begin_op();
 
