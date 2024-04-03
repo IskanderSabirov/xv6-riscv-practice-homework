@@ -107,7 +107,8 @@ extern uint64 sys_new_mutex(void);     // create new mutex
 extern uint64 sys_acquire_mutex(void); // acquire mutex by description
 extern uint64 sys_release_mutex(void); // release mutex by description
 extern uint64 sys_free_mutex(void);    // free mutex by description
-
+extern uint64 sys_dmsg(void);
+extern uint64 sys_log_ticks(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -139,6 +140,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_acquire_mutex]     sys_acquire_mutex, // add table entry
 [SYS_release_mutex]     sys_release_mutex, // add table entry
 [SYS_free_mutex]       sys_free_mutex, // add table entry
+[SYS_dmsg]     sys_dmsg,
+[SYS_log_ticks]   sys_log_ticks,
 };
 
 void

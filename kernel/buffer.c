@@ -13,7 +13,6 @@ void
 buffer_init() {
     initlock(&buffer.lock, "diagnostic_buffer");
     buffer.tail = buffer.data;
-
 }
 
 void
@@ -22,7 +21,7 @@ buffer_write(char symb) {
     *buffer.tail = symb;
     buffer.tail++;
 
-    if (buffer.tail == buffer.data + BUFFER_SIZE)
+    if (buffer.tail == buffer.data + BUFFER_SIZE - 1)
         buffer.tail = buffer.data;
 
 }
@@ -126,4 +125,29 @@ void pr_msg(const char *fmt, ...) {
 
 
     release(&buffer.lock);
+}
+
+int
+copyout_buffer(char *buf, int size) {
+
+    if (size <= 0)
+        return -1;
+
+    uint64 copy_len = ((size < BUFFER_SIZE) ? size : BUFFER_SIZE) - 1;
+
+    acquire(&buffer.lock);
+
+    if (copyout(myproc()->pagetable, (uint64) (buf), (buffer.data), sizeof(char) * (copy_len)) != 0) {
+        return -2;
+    }
+
+    char null = '\0';
+
+    if (copyout(myproc()->pagetable, (uint64) (buf + copy_len), &null, sizeof(char)) != 0) {
+        return -2;
+    }
+
+    release(&buffer.lock);
+
+    return copy_len + 1;
 }
