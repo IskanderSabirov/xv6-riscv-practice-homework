@@ -20,5 +20,7 @@ int main() {
 
     printf(buffer);
 
+    free(buffer);
+
     exit(0);
 }

@@ -26,6 +26,8 @@ int main() {
         printf("Buffer size - %d\n", dmsg(buf, BUFFER_SIZE));
         printf("%s", buf);
 
+        free(buf);
+
     } else {
 
         fprintf(2, "Error in fork\n");
