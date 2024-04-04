@@ -32,7 +32,7 @@ exec(char *path, char **argv)
   struct proc *p = myproc();
 
   acquire(&p->lock);
-  pr_msg("exec: pid = %d, with program name = %s", p->pid, path);
+  pr_msg("exec: pid = [%d], program = [%s]", p->pid, path);
   release(&p->lock);
 
   begin_op();
