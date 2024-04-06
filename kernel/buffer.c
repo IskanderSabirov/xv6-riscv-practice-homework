@@ -130,6 +130,9 @@ void pr_msg(const char *fmt, ...) {
 int
 copyout_buffer(char *buf, int size) {
 
+    if (!buf)
+        return -3;
+
     if (size <= 0)
         return -1;
 
