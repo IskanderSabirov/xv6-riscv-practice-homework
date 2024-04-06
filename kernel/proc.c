@@ -524,6 +524,7 @@ sched(void)
     panic("sched interruptible");
 
   intena = mycpu()->intena;
+  pr_msg("Switch pid [%d], name [%s], proc trapframe [%x], kernel context [%x]", mycpu()->proc->pid, mycpu()->proc->name, *p->trapframe, mycpu()->context);
   swtch(&p->context, &mycpu()->context);
   mycpu()->intena = intena;
 }
