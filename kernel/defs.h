@@ -202,6 +202,9 @@ int            free_mutex(int descriptor);
 void            buffer_init(void);
 void            pr_msg(const char *fmt, ...);
 int             copyout_buffer(char *buf, int size);
+void            logger_init(void);
+int             tune_logger(int param, int type); // on or off log information
+int             logger_flag(int param);           // get information about flags
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

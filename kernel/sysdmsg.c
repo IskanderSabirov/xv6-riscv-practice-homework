@@ -18,3 +18,12 @@ sys_dmsg(void) {
 
     return len;
 }
+
+int
+sys_logger(void) {
+    int param, on_off;
+    argint(0, &param);
+    argint(1, &on_off);
+
+    return tune_logger(param, on_off);
+}

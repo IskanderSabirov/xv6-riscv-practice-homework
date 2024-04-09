@@ -32,6 +32,7 @@ main()
     userinit();      // first user process
     __sync_synchronize();
     buffer_init();   // init diagnostic buffer
+    logger_init();
     started = 1;
   } else {
     while(started == 0)
