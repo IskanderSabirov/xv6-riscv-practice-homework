@@ -21,7 +21,7 @@ buffer_write(char symb) {
     *buffer.tail = symb;
     buffer.tail++;
 
-    if (buffer.tail == buffer.data + BUFFER_SIZE - 1)
+    if (buffer.tail == buffer.data + BUFFER_SIZE)
         buffer.tail = buffer.data;
 
 }
@@ -141,12 +141,14 @@ copyout_buffer(char *buf, int size) {
     acquire(&buffer.lock);
 
     if (copyout(myproc()->pagetable, (uint64) (buf), (buffer.data), sizeof(char) * (copy_len)) != 0) {
+        release(&buffer.lock);
         return -2;
     }
 
     char null = '\0';
 
     if (copyout(myproc()->pagetable, (uint64) (buf + copy_len), &null, sizeof(char)) != 0) {
+        release(&buffer.lock);
         return -2;
     }
 
