@@ -206,7 +206,7 @@ int             copyout_buffer(char *buf, int size);
 
 // logger.c
 void            logger_init(void);
-int             tune_logger(int param, int type); // on or off log information
+int             tune_log(int param, int type); // on or off log information
 int             logger_flag(int param);           // get information about flags
 void            log_exec(int pid, char* path);
 void            log_swtch(int pid, char* name, struct trapframe t, struct context c);
@@ -214,6 +214,7 @@ void            log_syscall(int call_num, int pid, char* name);
 void            log_unknown_syscall(int call_num, int pid, char* name);
 void            log_virtiointr();
 void            log_uartintr(char c);
+int             log_timer(int flag, int log_ticks); // ставит логирование определнного собыития на log_ticks тиков
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

@@ -25,5 +25,5 @@ sys_logger(void) {
     argint(0, &param);
     argint(1, &on_off);
 
-    return tune_logger(param, on_off);
+    return tune_log(param, on_off);
 }

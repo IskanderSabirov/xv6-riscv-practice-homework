@@ -1,11 +1,10 @@
-#include "buffer.h"
+#include "logger.h"
 #include "types.h"
 #include "param.h"
 #include "memlayout.h"
 #include "riscv.h"
 #include "proc.h"
 #include "defs.h"
-#include <stdarg.h>
 
 struct logging_flags logger;
 
@@ -16,12 +15,20 @@ logger_init() {
     logger.interrupt = 0;
     logger.process_switch = 0;
     logger.sys_call = 0;
+    logger.syscall_start = 0;
+    logger.syscall_timer = 0;
+    logger.interrupt_start = 0;
+    logger.interrupt_timer = 0;
+    logger.swtch_start = 0;
+    logger.swtch_timer = 0;
+    logger.exec_start = 0;
+    logger.exec_timer = 0;
 }
 
 // flags: 1 - exec, 2 - intrpt, 3 - swtch, 4 - syscall, there are defines in param.h
 // types: 1 - on, 0 - off
 int
-tune_logger(int flag, int type) {
+tune_log(int flag, int type) {
     if (type != 1 && type != 0)
         return -1;
     if (flag <= 0 || flag > 5)
@@ -30,17 +37,58 @@ tune_logger(int flag, int type) {
     acquire(&logger.lock);
 
     switch (flag) {
-        case 1:
+        case EXEC:
             logger.exec = type;
             break;
-        case 2:
+        case INTRPT:
             logger.interrupt = type;
             break;
-        case 3:
+        case SWTCH:
             logger.process_switch = type;
             break;
-        case 4:
+        case SYSCALL:
             logger.sys_call = type;
+            break;
+    }
+
+    release(&logger.lock);
+
+    return 0;
+}
+
+int log_timer(int flag, int log_ticks) {
+    if (flag <= 0 || flag > 5)
+        return -1;
+
+    if (log_ticks <= 0)
+        return -2;
+
+    acquire(&logger.lock);
+
+    acquire(&tickslock);
+    int cur_ticks = ticks;
+    release(&tickslock);
+
+    switch (flag) {
+        case EXEC:
+            logger.exec = 0;
+            logger.exec_start = cur_ticks;
+            logger.exec_timer = log_ticks;
+            break;
+        case INTRPT:
+            logger.interrupt = 0;
+            logger.interrupt_start = cur_ticks;
+            logger.interrupt_timer = log_ticks;
+            break;
+        case SWTCH:
+            logger.process_switch = 0;
+            logger.swtch_start = cur_ticks;
+            logger.swtch_timer = log_ticks;
+            break;
+        case SYSCALL:
+            logger.sys_call = 0;
+            logger.syscall_start = cur_ticks;
+            logger.syscall_timer = log_ticks;
             break;
     }
 
@@ -51,24 +99,28 @@ tune_logger(int flag, int type) {
 
 int
 logger_flag(int flag) {
-    if (flag <= 0 || flag > 5)
+    if (flag < 1 || flag > 5)
         return -1;
 
     acquire(&logger.lock);
 
+    acquire(&tickslock);
+    int cur_ticks = ticks;
+    release(&tickslock);
+
     switch (flag) {
-        case 1:
+        case EXEC:
             release(&logger.lock);
-            return logger.exec;
-        case 2:
+            return logger.exec || (cur_ticks < logger.exec_start + logger.exec_timer);
+        case INTRPT:
             release(&logger.lock);
-            return logger.interrupt;
-        case 3:
+            return logger.interrupt || (cur_ticks < logger.interrupt_start + logger.interrupt_timer);
+        case SWTCH:
             release(&logger.lock);
-            return logger.process_switch;
-        case 4:
+            return logger.process_switch || (cur_ticks < logger.swtch_start + logger.swtch_timer);
+        case SYSCALL:
             release(&logger.lock);
-            return logger.sys_call;
+            return logger.sys_call || (cur_ticks < logger.syscall_start + logger.syscall_timer);
     }
 
     release(&logger.lock);
