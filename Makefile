@@ -155,7 +155,8 @@ UPROGS=\
 	$U/_hw4_exec\
 	$U/_dmsg\
 	$U/_hw4_overflow\
-	$U/_hw5_log_flag\
+	$U/_hw5_log\
+	$U/_hw5_log_timer\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

@@ -110,6 +110,7 @@ extern uint64 sys_free_mutex(void);    // free mutex by description
 extern uint64 sys_dmsg(void);
 extern uint64 sys_log_ticks(void);
 extern uint64 sys_logger(void);
+extern uint64 sys_logger_timer(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -144,6 +145,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_dmsg]     sys_dmsg,
 [SYS_log_ticks]   sys_log_ticks,
 [SYS_tune_log]   sys_logger,
+[SYS_logger_timer] sys_logger_timer,
 };
 
 void

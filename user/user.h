@@ -32,6 +32,7 @@ int free_mutex(int description);    // free mutex by description
 int dmsg(char* buf, int size);
 int log_ticks(void);
 int tune_log(int param, int type);
+int logger_timer(int param, int ticks);
 
 // ulib.c
 int stat(const char*, struct stat*);

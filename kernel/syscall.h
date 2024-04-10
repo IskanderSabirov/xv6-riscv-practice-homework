@@ -29,3 +29,4 @@
 #define SYS_dmsg   28
 #define SYS_log_ticks  29
 #define SYS_tune_log  30
+#define SYS_logger_timer 31

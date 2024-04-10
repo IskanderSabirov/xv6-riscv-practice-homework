@@ -27,3 +27,12 @@ sys_logger(void) {
 
     return tune_log(param, on_off);
 }
+
+int
+sys_logger_timer(void){
+    int param, log_ticks;
+    argint(0, &param);
+    argint(1, &log_ticks);
+
+    return log_timer(param, log_ticks);
+}

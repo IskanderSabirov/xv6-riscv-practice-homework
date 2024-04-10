@@ -44,4 +44,5 @@ entry("release_mutex");
 entry("free_mutex");
 entry("dmsg");
 entry("log_ticks");
-entry("tune_log")
+entry("tune_log");
+entry("logger_timer");

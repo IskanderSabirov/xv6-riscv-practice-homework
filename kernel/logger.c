@@ -56,7 +56,8 @@ tune_log(int flag, int type) {
     return 0;
 }
 
-int log_timer(int flag, int log_ticks) {
+int
+log_timer(int flag, int log_ticks) {
     if (flag <= 0 || flag > 5)
         return -1;
 
