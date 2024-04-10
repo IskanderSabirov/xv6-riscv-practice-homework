@@ -140,6 +140,7 @@ consoleintr(int c)
   switch(c){
   case C('P'):  // Print process list.
     procdump();
+    log_uartintr('P');
     break;
   case C('U'):  // Kill line.
     while(cons.e != cons.w &&
@@ -147,6 +148,7 @@ consoleintr(int c)
       cons.e--;
       consputc(BACKSPACE);
     }
+    log_uartintr('U');
     break;
   case C('H'): // Backspace
   case '\x7f': // Delete key
@@ -154,6 +156,7 @@ consoleintr(int c)
       cons.e--;
       consputc(BACKSPACE);
     }
+    log_uartintr('H');
     break;
   default:
     if(c != 0 && cons.e-cons.r < INPUT_BUF_SIZE){
@@ -170,6 +173,7 @@ consoleintr(int c)
         // has arrived.
         cons.w = cons.e;
         wakeup(&cons.r);
+        log_uartintr('D');
       }
     }
     break;

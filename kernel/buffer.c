@@ -8,7 +8,6 @@
 #include <stdarg.h>
 
 struct diagnostic_buffer buffer;
-struct logging_flags logger;
 
 void
 buffer_init() {
@@ -17,73 +16,6 @@ buffer_init() {
     buffer.tail = buffer.data + 1;
     for (int i = 1; i < BUFFER_SIZE; ++i)
         buffer.data[i] = '\0';
-}
-
-void
-logger_init() {
-    initlock(&buffer.lock, "logger_lock");
-    logger.exec = 0;
-    logger.interrupt = 0;
-    logger.process_switch = 0;
-    logger.sys_call = 0;
-}
-
-// flags: 1 - exec, 2 - intrpt, 3 - swtch, 4 - syscall
-// types: 1 - on, 0 - off
-int
-tune_logger(int flag, int type) {
-    if (type != 1 && type != 0)
-        return -1;
-    if (flag <= 0 || flag > 5)
-        return -2;
-
-    acquire(&logger.lock);
-
-    switch (flag) {
-        case 1:
-            logger.exec = type;
-            break;
-        case 2:
-            logger.interrupt = type;
-            break;
-        case 3:
-            logger.process_switch = type;
-            break;
-        case 4:
-            logger.sys_call = type;
-            break;
-    }
-
-    release(&logger.lock);
-
-    return 0;
-}
-
-int
-logger_flag(int flag) {
-    if (flag <= 0 || flag > 5)
-        return -1;
-
-    acquire(&logger.lock);
-
-    switch (flag) {
-        case 1:
-            release(&logger.lock);
-            return logger.exec;
-        case 2:
-            release(&logger.lock);
-            return logger.interrupt;
-        case 3:
-            release(&logger.lock);
-            return logger.process_switch;
-        case 4:
-            release(&logger.lock);
-            return logger.sys_call;
-    }
-
-    release(&logger.lock);
-
-    return -2;
 }
 
 void

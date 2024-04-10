@@ -35,7 +35,8 @@ OBJS = \
   $K/sysmutex.o\
   $K/buffer.o\
   $K/sysdmsg.o\
-  $K/sys_log_ticks.o
+  $K/sys_log_ticks.o\
+  $K/logger.o
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -154,6 +155,7 @@ UPROGS=\
 	$U/_hw4_exec\
 	$U/_dmsg\
 	$U/_hw4_overflow\
+	$U/_hw5_log_flag\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

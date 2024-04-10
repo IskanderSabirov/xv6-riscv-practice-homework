@@ -33,7 +33,7 @@ exec(char *path, char **argv)
 
   if(logger_flag(EXEC)==1) {
       acquire(&p->lock);
-      pr_msg("Exec: pid = [%d], program = [%s]", p->pid, path);
+      log_exec(p->pid, path);
       release(&p->lock);
   }
 

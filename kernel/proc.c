@@ -476,6 +476,12 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
+
+  int pid;
+  char* proc_name;
+  struct trapframe proc_trapframe;
+  struct context cpu_context;
+
   
   c->proc = 0;
   for(;;){
@@ -488,6 +494,12 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
+
+        pid = p->pid;
+        proc_name = p->name;
+        proc_trapframe = *p->trapframe;
+        cpu_context = c->context;
+
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
@@ -495,6 +507,11 @@ scheduler(void)
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         c->proc = 0;
+        release(&p->lock);
+        if(logger_flag(SWTCH)){
+            log_swtch(pid, proc_name, proc_trapframe, cpu_context);
+        }
+        continue;
       }
       release(&p->lock);
     }
@@ -524,7 +541,6 @@ sched(void)
     panic("sched interruptible");
 
   intena = mycpu()->intena;
-//  pr_msg("Switch pid [%d], name [%s], proc trapframe [%x], kernel context [%x]", mycpu()->proc->pid, mycpu()->proc->name, *p->trapframe, mycpu()->context);
   swtch(&p->context, &mycpu()->context);
   mycpu()->intena = intena;
 }

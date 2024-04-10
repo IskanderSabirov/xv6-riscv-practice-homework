@@ -10,6 +10,7 @@ struct sleeplock;
 struct stat;
 struct superblock;
 struct mutex;
+struct trapframe;
 
 // bio.c
 void            binit(void);
@@ -202,9 +203,17 @@ int            free_mutex(int descriptor);
 void            buffer_init(void);
 void            pr_msg(const char *fmt, ...);
 int             copyout_buffer(char *buf, int size);
+
+// logger.c
 void            logger_init(void);
 int             tune_logger(int param, int type); // on or off log information
 int             logger_flag(int param);           // get information about flags
+void            log_exec(int pid, char* path);
+void            log_swtch(int pid, char* name, struct trapframe t, struct context c);
+void            log_syscall(int call_num, int pid, char* name);
+void            log_unknown_syscall(int call_num, int pid, char* name);
+void            log_virtiointr();
+void            log_uartintr(char c);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

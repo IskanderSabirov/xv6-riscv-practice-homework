@@ -159,16 +159,15 @@ syscall(void)
     p->trapframe->a0 = syscalls[num]();
     if(logger_flag(SYSCALL)==1){
         acquire(&p->lock);
-        pr_msg("Sys call: [%d], in pid: [%d], name: [%s]", num, p->pid, p->name);
+        log_syscall(num, p->pid, p->name);
         release(&p->lock);
     }
   } else {
       if(logger_flag(SYSCALL)==1){
           acquire(&p->lock);
-          printf("%d %s: unknown sys call %d\n", p->pid, p->name, num);
+          log_unknown_syscall(num, p->pid, p->name);
           release(&p->lock);
       }
     p->trapframe->a0 = -1;
-    pr_msg("Unknown sys call: [%d], in pid: [%d], name: [%s]",num, p->pid, p->name);
   }
 }
