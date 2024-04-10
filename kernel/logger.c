@@ -31,8 +31,6 @@ int
 tune_log(int flag, int type) {
     if (type != 1 && type != 0)
         return -1;
-    if (flag <= 0 || flag > 5)
-        return -2;
 
     acquire(&logger.lock);
 
@@ -49,6 +47,8 @@ tune_log(int flag, int type) {
         case SYSCALL:
             logger.sys_call = type;
             break;
+        default:
+            return -2;
     }
 
     release(&logger.lock);
@@ -58,8 +58,6 @@ tune_log(int flag, int type) {
 
 int
 log_timer(int flag, int log_ticks) {
-    if (flag <= 0 || flag > 5)
-        return -1;
 
     if (log_ticks <= 0)
         return -2;
@@ -91,6 +89,8 @@ log_timer(int flag, int log_ticks) {
             logger.syscall_start = cur_ticks;
             logger.syscall_timer = log_ticks;
             break;
+        default:
+            return -1;
     }
 
     release(&logger.lock);
@@ -100,8 +100,6 @@ log_timer(int flag, int log_ticks) {
 
 int
 logger_flag(int flag) {
-    if (flag < 1 || flag > 5)
-        return -1;
 
     acquire(&logger.lock);
 
@@ -122,11 +120,11 @@ logger_flag(int flag) {
         case SYSCALL:
             release(&logger.lock);
             return logger.sys_call || (cur_ticks < logger.syscall_start + logger.syscall_timer);
+        default:
+            release(&logger.lock);
+            return -1;
     }
 
-    release(&logger.lock);
-
-    return -2;
 }
 
 void
