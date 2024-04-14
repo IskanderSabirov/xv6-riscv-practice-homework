@@ -12,8 +12,9 @@ struct diagnostic_buffer buffer;
 void
 buffer_init() {
     initlock(&buffer.lock, "diagnostic_buffer");
-    buffer.tail = buffer.data;
-    for (int i = 0; i < BUFFER_SIZE; ++i)
+    buffer.data[0] = '\n';
+    buffer.tail = buffer.data + 1;
+    for (int i = 1; i < BUFFER_SIZE; ++i)
         buffer.data[i] = '\0';
 }
 
@@ -155,7 +156,21 @@ copyout_buffer(char *buf, int size) {
 
     acquire(&buffer.lock);
 
-    if (copyout(myproc()->pagetable, (uint64) (buf), (buffer.data), sizeof(char) * (copy_len)) != 0) {
+    uint64 begin = 0;
+    while (begin < (copy_len - 1) && buffer.data[begin] != '\n')
+        ++begin;
+
+    // свдигаем на следующий символ после '\n'
+    ++begin;
+
+    // копируем, что было после первого '\n'
+    if (copyout(myproc()->pagetable, (uint64) (buf), (buffer.data + begin), sizeof(char) * (copy_len - begin)) != 0) {
+        release(&buffer.lock);
+        return -2;
+    }
+
+    // копируем начало, что было до первого '\n'
+    if (copyout(myproc()->pagetable, (uint64) (buf + copy_len - begin), (buffer.data), sizeof(char) * (begin)) != 0) {
         release(&buffer.lock);
         return -2;
     }
