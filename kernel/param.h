@@ -16,3 +16,8 @@
 #define MEMPAGESIZE  1024
 #define PAGESINBUF   4
 #define BUFFER_SIZE   MEMPAGESIZE*PAGESINBUF
+
+#define EXEC 1
+#define INTRPT 2
+#define SWTCH 3
+#define SYSCALL 4
