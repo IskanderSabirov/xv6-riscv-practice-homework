@@ -13,10 +13,25 @@ void
 buffer_init() {
     initlock(&buffer.lock, "diagnostic_buffer");
     buffer.tail = buffer.data;
+    for (int i = 0; i < BUFFER_SIZE; ++i)
+        buffer.data[i] = '\0';
 }
 
 void
 buffer_write(char symb) {
+
+    if (*buffer.tail != '\0') {
+        char *current = buffer.tail;
+        while (1) {
+            char was = *current;
+            *current = '\0';
+            current++;
+            if (current == buffer.data + BUFFER_SIZE)
+                current = buffer.data;
+            if (was == '\n')
+                break;
+        }
+    }
 
     *buffer.tail = symb;
     buffer.tail++;
@@ -136,7 +151,7 @@ copyout_buffer(char *buf, int size) {
     if (size <= 0)
         return -1;
 
-    uint64 copy_len = ((size < BUFFER_SIZE) ? size : BUFFER_SIZE) - 1;
+    uint64 copy_len = ((size < BUFFER_SIZE + 1) ? size - 1 : BUFFER_SIZE);
 
     acquire(&buffer.lock);
 
