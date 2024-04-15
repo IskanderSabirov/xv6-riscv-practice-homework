@@ -140,6 +140,9 @@ consoleintr(int c)
   switch(c){
   case C('P'):  // Print process list.
     procdump();
+    if(logger_flag(INTRPT)==1){
+        log_uartintr('P');
+    }
     break;
   case C('U'):  // Kill line.
     while(cons.e != cons.w &&
@@ -147,12 +150,18 @@ consoleintr(int c)
       cons.e--;
       consputc(BACKSPACE);
     }
+    if(logger_flag(INTRPT)==1){
+        log_uartintr('U');
+    }
     break;
   case C('H'): // Backspace
   case '\x7f': // Delete key
     if(cons.e != cons.w){
       cons.e--;
       consputc(BACKSPACE);
+    }
+    if(logger_flag(INTRPT)==1){
+        log_uartintr('H');
     }
     break;
   default:
@@ -170,6 +179,9 @@ consoleintr(int c)
         // has arrived.
         cons.w = cons.e;
         wakeup(&cons.r);
+        if(logger_flag(INTRPT)==1){
+              log_uartintr('D');
+        }
       }
     }
     break;

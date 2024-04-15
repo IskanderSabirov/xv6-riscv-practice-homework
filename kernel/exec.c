@@ -31,6 +31,12 @@ exec(char *path, char **argv)
   pagetable_t pagetable = 0, oldpagetable;
   struct proc *p = myproc();
 
+  if(logger_flag(EXEC)==1) {
+      acquire(&p->lock);
+      log_exec(p->pid, path);
+      release(&p->lock);
+  }
+
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -119,7 +125,7 @@ exec(char *path, char **argv)
     if(*s == '/')
       last = s+1;
   safestrcpy(p->name, last, sizeof(p->name));
-    
+
   // Commit to the user image.
   oldpagetable = p->pagetable;
   p->pagetable = pagetable;
@@ -161,6 +167,6 @@ loadseg(pagetable_t pagetable, uint64 va, struct inode *ip, uint offset, uint sz
     if(readi(ip, 0, (uint64)pa, offset+i, n) != n)
       return -1;
   }
-  
+
   return 0;
 }

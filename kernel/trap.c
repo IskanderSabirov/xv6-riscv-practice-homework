@@ -189,6 +189,9 @@ devintr()
     if(irq == UART0_IRQ){
       uartintr();
     } else if(irq == VIRTIO0_IRQ){
+        if(logger_flag(INTRPT)==1){
+            log_virtiointr();
+        }
       virtio_disk_intr();
     } else if(irq){
       printf("unexpected interrupt irq=%d\n", irq);

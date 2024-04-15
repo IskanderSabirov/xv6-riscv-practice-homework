@@ -107,7 +107,10 @@ extern uint64 sys_new_mutex(void);     // create new mutex
 extern uint64 sys_acquire_mutex(void); // acquire mutex by description
 extern uint64 sys_release_mutex(void); // release mutex by description
 extern uint64 sys_free_mutex(void);    // free mutex by description
-
+extern uint64 sys_dmsg(void);
+extern uint64 sys_log_ticks(void);
+extern uint64 sys_logger(void);
+extern uint64 sys_logger_timer(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -139,6 +142,10 @@ static uint64 (*syscalls[])(void) = {
 [SYS_acquire_mutex]     sys_acquire_mutex, // add table entry
 [SYS_release_mutex]     sys_release_mutex, // add table entry
 [SYS_free_mutex]       sys_free_mutex, // add table entry
+[SYS_dmsg]     sys_dmsg,
+[SYS_log_ticks]   sys_log_ticks,
+[SYS_tune_log]   sys_logger,
+[SYS_logger_timer] sys_logger_timer,
 };
 
 void
@@ -152,9 +159,17 @@ syscall(void)
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
+    if(logger_flag(SYSCALL)==1){
+        acquire(&p->lock);
+        log_syscall(num, p->pid, p->name);
+        release(&p->lock);
+    }
   } else {
-    printf("%d %s: unknown sys call %d\n",
-            p->pid, p->name, num);
+      if(logger_flag(SYSCALL)==1){
+          acquire(&p->lock);
+          log_unknown_syscall(num, p->pid, p->name);
+          release(&p->lock);
+      }
     p->trapframe->a0 = -1;
   }
 }
