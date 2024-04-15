@@ -22,9 +22,20 @@ int main() {
 
         wait(&exit_code);
 
-        char *buf = malloc(sizeof(char) * BUFFER_SIZE);
-        printf("Buffer size - %d\n", dmsg(buf, BUFFER_SIZE));
-        printf("%s", buf);
+        char *buf = malloc(sizeof(char) * BUFFER_SIZE + 1);
+        int len = dmsg(buf, BUFFER_SIZE + 1);
+
+        if (len != BUFFER_SIZE + 1) {
+            fprintf(2, "Error in dmsg\n");
+            free(buf);
+            exit(-3);
+        }
+
+        for (int i = 0; i < len; ++i) {
+            char c = buf[i];
+            printf("%c", c);
+        }
+
 
         free(buf);
 
