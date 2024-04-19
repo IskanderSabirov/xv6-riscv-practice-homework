@@ -110,17 +110,19 @@ void pr_msg(const char *fmt, ...) {
             break;
         switch (c) {
             case 'd':
-                printint_buffer(va_arg(ap, int), 10, 1);
+                printint_buffer(va_arg(ap,
+                int), 10, 1);
                 break;
             case 'x':
-                printint_buffer(va_arg(ap, int), 16, 1);
+                printint_buffer(va_arg(ap,
+                int), 16, 1);
                 break;
             case 'p':
                 printptr_buffer(va_arg(ap, uint64));
                 break;
             case 's':
                 if ((s = va_arg(ap, char*)) == 0)
-                    s = "(null)";
+                s = "(null)";
                 for (; *s; s++)
                     buffer_write(*s);
                 break;
@@ -157,8 +159,11 @@ copyout_buffer(char *buf, int size) {
     acquire(&buffer.lock);
 
     uint64 begin = 0;
-    while (begin < (copy_len - 1) && buffer.data[begin] != '\n')
-        ++begin;
+    char *cur = buffer.data;
+    while (cur != buffer.tail) {
+        cur++;
+        begin++;
+    }
 
     // свдигаем на следующий символ после '\n'
     ++begin;
