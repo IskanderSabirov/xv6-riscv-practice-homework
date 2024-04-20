@@ -198,5 +198,10 @@ int            release_mutex(int descriptor);
 int            use_mutex(int descriptor);
 int            free_mutex(int descriptor);
 
+// buffer.c
+void            buffer_init(void);
+void            pr_msg(const char *fmt, ...);
+int             copyout_buffer(char *buf, int size);
+
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

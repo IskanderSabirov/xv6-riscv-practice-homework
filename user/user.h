@@ -29,6 +29,8 @@ int new_mutex(void);     // create new mutex
 int acquire_mutex(int description); // acquire mutex by description
 int release_mutex(int description); // release mutex by description
 int free_mutex(int description);    // free mutex by description
+int dmsg(char* buf, int size);
+int log_ticks(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -42,3 +42,5 @@ entry("new_mutex");
 entry("acquire_mutex");
 entry("release_mutex");
 entry("free_mutex");
+entry("dmsg");
+entry("log_ticks");
