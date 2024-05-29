@@ -147,7 +147,8 @@ UPROGS=\
 	$U/_hw3_3\
 	$U/_ps\
 	$U/_hw3_mut\
-	$U/_hw3_notmut
+	$U/_hw3_notmut\
+	$U/_hw7_file
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
